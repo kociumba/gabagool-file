@@ -21,7 +21,7 @@ type DataTypes int
 
 const (
 	Bytes DataTypes = iota // data stored is an array of bytes
-	Text                   // data stored is a string that is editable
+	Text                   // data stored is a string
 	Image                  // data stored is an image, as an array of pixels that are compatible with the go image package
 )
 
@@ -121,7 +121,6 @@ func (g *GabagoolFile) ParseFile(path string) (*GabagoolFile, error) {
 // Opens the files from the provided path and returns it
 func (g *GabagoolFile) Open(path string) (*GabagoolFile, error) {
 	fileMutex.RLock()
-	defer fileMutex.RUnlock()
 
 	if !filepath.IsAbs(path) {
 		absPath, err := filepath.Abs(path)
@@ -136,6 +135,9 @@ func (g *GabagoolFile) Open(path string) (*GabagoolFile, error) {
 	if fileCache.Path == path {
 		return &fileCache.FileData, nil
 	}
+
+	// if not managed manually creats a deadlock
+	fileMutex.RUnlock()
 
 	f, err := os.Open(path + ".gabagool")
 	if err != nil {
