@@ -9,10 +9,11 @@ I lost a full nights of sleep for this and so here it is.
 
 ## Usage
 
-simply import the gabagool package from this repo like this in go
-```go
-import "github.com/kociumba/gabagool-file/gabagool"
+simply `go get` the gabagool package:
+```shell
+go get github.com/kociumba/gabagool-file/gabagool
 ```
+the `gabagool` subpackage in this repo is the library while
 
-the main package will be a `.gabagool` interpreter for use with desktop environments.
+the `main` package will be a `.gabagool` interpreter for use with desktop environments.
  
