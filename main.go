@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -20,13 +21,42 @@ func main() {
 	// 	panic(err)
 	// }
 
-	if os.Args[1] == "create" {
+	if os.Args[1] == "createP" {
 		gabagool, err := g.CreateFile(gabagool.Text, []byte(os.Args[2]))
 		if err != nil {
 			log.Error(err)
 			os.Exit(1)
 		}
 		gabagool.SaveWithBitPacking(os.Args[3], gabagool)
+		os.Exit(0)
+	}
+
+	if os.Args[1] == "create" {
+		gabagool, err := g.CreateFile(gabagool.Text, []byte(os.Args[2]))
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+		gabagool.Save(os.Args[3], gabagool)
+		os.Exit(0)
+	}
+
+	if os.Args[1] == "testC" {
+		compressed, err := gabagool.Compress(os.Args[2])
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+		decompressed, err := gabagool.Decompress(compressed)
+		if err != nil {
+			log.Error(err)
+			os.Exit(1)
+		}
+		if !bytes.Equal([]byte(os.Args[2]), []byte(decompressed)) {
+			log.Error("original and decompressed data do not match")
+			os.Exit(1)
+		}
+		log.Info("original and decompressed data match", "original", os.Args[2], "decompressed", decompressed)
 		os.Exit(0)
 	}
 

@@ -1,13 +1,19 @@
 package gabagool
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
+
+	"github.com/charmbracelet/log"
+	kio "github.com/flanglet/kanzi-go/v2/io"
 )
 
 var (
@@ -184,6 +190,12 @@ func (g *GabagoolFile) Open(path string) (*GabagoolFile, error) {
 		return nil, err
 	}
 
+	decoded, err := Decompress(string(data))
+	data = []byte(decoded)
+	if err != nil {
+		return nil, err
+	}
+
 	// Populate the GabagoolFile structure
 	g.Header = binary.BigEndian.Uint64(header)
 	g.Timestamp = timestamp
@@ -252,9 +264,66 @@ func (g *GabagoolFile) Save(path string, file *GabagoolFile) error {
 		return err
 	}
 
-	if _, err := f.Write(file.Data); err != nil {
+	// Encode data with huffman for lossless compression
+	data, err := Compress(string(file.Data))
+	if err != nil {
+		return err
+	}
+
+	log.Info(data) // for testing
+
+	if _, err := f.Write([]byte(data)); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func Compress(data string) (string, error) {
+	var buf bytes.Buffer
+	pr, pw := io.Pipe()
+
+	go func() {
+		defer pw.Close()
+		w, err := kio.NewWriter(pw, "RLT+TEXT", "HUFFMAN", 1024, 4, false, 0, false)
+		if err != nil {
+			pw.CloseWithError(err)
+			return
+		}
+		defer w.Close()
+
+		_, err = w.Write([]byte(data))
+		if err != nil {
+			pw.CloseWithError(err)
+			return
+		}
+	}()
+
+	_, err := io.Copy(&buf, pr)
+	if err != nil {
+		return "", err
+	}
+
+	return buf.String(), nil
+}
+
+func Decompress(data string) (string, error) {
+	r, err := kio.NewReader(io.NopCloser(strings.NewReader(data)), 4)
+	if err != nil {
+		return "", err
+	}
+	buf := make([]byte, 1024)
+	var decoded strings.Builder
+	for {
+		n, err := r.Read(buf)
+		if err != nil && err != io.EOF {
+			return "", err
+		}
+		if n == 0 {
+			break
+		}
+		decoded.Write(buf[:n])
+	}
+
+	return decoded.String(), nil
 }

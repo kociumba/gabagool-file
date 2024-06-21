@@ -8,7 +8,10 @@ tasks:
     - go build -C . -o ./bin
   build-r:
     cmds:
-    - go build -C . -o ./bin -ldflags "-s -w"
+    - go build -C . -o ./bin -ldflags "-s -w -H windowsgui"
   test:
     cmds:
     - go test -C ./gabagool -v
+  install:
+    cmds:
+    - go install -ldflags "-s -w -H windowsgui" .

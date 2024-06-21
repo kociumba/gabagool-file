@@ -7,6 +7,8 @@ require (
 	golang.org/x/sys v0.13.0
 )
 
+require github.com/flanglet/kanzi-go/v2 v2.3.0
+
 require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/lipgloss v0.10.0 // indirect
