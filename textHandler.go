@@ -89,7 +89,7 @@ func displayData(data []byte, dataType gabagool.DataTypes) error {
 	log.Info(def)
 
 	// Launch the default text editor with the temporary file
-	cmd := exec.Command(def, tempFile.Name())
+	cmd := exec.Command(def, `"`+tempFile.Name()+`"`)
 
 	log.Info(cmd)
 

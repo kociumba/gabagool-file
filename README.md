@@ -16,4 +16,14 @@ go get github.com/kociumba/gabagool-file/gabagool
 the `gabagool` subpackage in this repo is the library while
 
 the `main` package will be a `.gabagool` interpreter for use with desktop environments.
+
+## Opening a `.gabagool` file
+
+This repo also houses the `.gabagool` language features which can be installed with:
+```shell
+go install github.com/kociumba/gabagool-file -ldflags "-s -w -H windowsgui"
+```
+this installs a program capable of decoding and interpreting `.gabagool` files
+
+This program should be added to your `$PATH` and set as the default for `.gabagool` files.
  
