@@ -21,7 +21,7 @@ the `main` package will be a `.gabagool` interpreter for use with desktop enviro
 
 This repo also houses the `.gabagool` language features which can be installed with:
 ```shell
-go install github.com/kociumba/gabagool-file -ldflags "-s -w -H windowsgui"
+go install -ldflags "-s -w -H windowsgui" 'github.com/kociumba/gabagool-file'
 ```
 this installs a program capable of decoding and interpreting `.gabagool` files
 
