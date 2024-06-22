@@ -285,7 +285,7 @@ func Compress(data string) (string, error) {
 
 	go func() {
 		defer pw.Close()
-		w, err := kio.NewWriter(pw, "RLT+TEXT", "HUFFMAN", 1024, 4, false, 0, false)
+		w, err := kio.NewWriter(pw, "TEXT+UTF+EXE+BWT+ZRLT+MM+PACK", "HUFFMAN", 1024, 4, false, 0, false)
 		if err != nil {
 			pw.CloseWithError(err)
 			return

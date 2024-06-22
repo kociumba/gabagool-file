@@ -23,6 +23,8 @@ func displayData(data []byte, dataType gabagool.DataTypes) error {
 		ext = ".bin"
 	}
 
+	log.Info("", "Data content:", string(data))
+
 	// Create a temporary file with the text data
 	tempFile, err := os.CreateTemp("", "gabagool-*"+ext)
 	if err != nil {
@@ -59,6 +61,10 @@ func displayData(data []byte, dataType gabagool.DataTypes) error {
 	// Write the text data to the temporary file
 	_, err = tempFile.Write(data)
 	if err != nil {
+		return err
+	}
+
+	if err := tempFile.Close(); err != nil {
 		return err
 	}
 
